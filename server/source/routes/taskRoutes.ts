@@ -1,13 +1,10 @@
 import {Router} from "express";
 import taskController from "../controllers/taskController"
+import Task from "../models/Task";
 
 const router = Router();
 
-// router.get("/getTasks", (req, res)=>{
-// res.send("get . tasks")
-// })
-
-router.get("/getTasks", taskController.getTasks)
+router.route("/").get(taskController.getTasks).post(taskController.addTask)
 
 router.put("/toggleCompletion/:id", taskController.toggleTaskCompletion)
 

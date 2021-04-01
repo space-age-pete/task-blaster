@@ -15,6 +15,17 @@ const getTasks = async (req: Request, res: Response) => {
   }
 }
 
+const addTask = async (req: Request, res: Response) => {
+  try {
+    const dbTask = await Task.create(req.body);
+
+    res.json(dbTask)
+
+  } catch (err){
+    res.status(500).json({message: "it broke i guess", err})
+  }
+}
+
 const toggleTaskCompletion = async (req:Request, res: Response)=>{
   try {
     const dbTask = await Task.findById(req.params.id);
@@ -38,4 +49,4 @@ const toggleTaskCompletion = async (req:Request, res: Response)=>{
   }
 }
 
-export default {getTasks, toggleTaskCompletion};
+export default {getTasks, addTask, toggleTaskCompletion};

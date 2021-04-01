@@ -10,13 +10,17 @@ export interface Task {
 }
 
 const getTasks = async ()=>{
-  const data: {data: Task[]} = await axios.get("/api/tasks/getTasks")
+  const data: {data: Task[]} = await axios.get("/api/tasks")
   console.log("data", data)
   return data;
 }
 
-const toggleCompletion = async (id: string)=>{
+const addTask = (text: string)=>{
+  return axios.post("/api/tasks", {text})
+}
+
+const toggleCompletion = (id: string)=>{
   return axios.put("/api/tasks/toggleCompletion/" + id)
 }
 
-export default {getTasks, toggleCompletion}
+export default {getTasks, addTask, toggleCompletion}

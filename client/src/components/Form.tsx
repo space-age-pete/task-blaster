@@ -14,40 +14,19 @@ function Form() {
     getTasks();
   }, []);
 
-  // useEffect(() => {
-  //   let uh: Task[];
-  //   const oldTasks = localStorage.getItem("tasks");
-  //   uh = oldTasks ? JSON.parse(oldTasks) : [];
-
-  //   setTasks(uh);
-  // }, []);
-
-  // useEffect(() => {
-  //   localStorage.setItem("tasks", JSON.stringify(tasks));
-  // }, [tasks]);
-
   const addNewTask = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    // setTasks((tasks) => [
-    //   ...tasks,
-    //   {
-    //     text: newTask,
-    //     completed: false,
-    //     dateAdded: new Date(),
-    //   },
-    // ]);
-    setNewTask("");
+    if (!newTask) return;
+
+    API.addTask(newTask).then(() => {
+      setNewTask("");
+      getTasks();
+    });
   };
 
-  // const completeTask = (index: number) => {
-  //   const tempTasks = [...tasks];
-  //   tempTasks[index].completed = !tempTasks[index].completed;
-  //   setTasks(tempTasks);
-  // };
-
   const completeTask = (id: string) => {
-    API.toggleCompletion(id).then((res) => getTasks());
+    API.toggleCompletion(id).then(() => getTasks());
   };
 
   return (
@@ -58,7 +37,9 @@ function Form() {
           value={newTask}
           onChange={(e) => setNewTask(e.currentTarget.value)}
         />
-        {/* <button onClick={addNewTask}>ADD</button> */}
+        <button onClick={addNewTask} disabled={!newTask}>
+          ADD
+        </button>
       </form>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>
