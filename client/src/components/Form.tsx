@@ -1,53 +1,53 @@
 import React, { useState, useEffect } from "react";
-// import { textChangeRangeIsUnchanged } from "typescript";
-
-interface Task {
-  text: String;
-  completed: Boolean;
-  dateAdded: Date;
-  dateCompleted?: Date;
-}
+import { setConstantValue } from "typescript";
+import API, { Task } from "../utils/API";
 
 function Form() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
 
-  const anExample: Task = {
-    text: "do this",
-    completed: false,
-    dateAdded: new Date(),
+  const getTasks = () => {
+    API.getTasks().then((response) => setTasks(response.data));
   };
 
   useEffect(() => {
-    let uh: Task[];
-    const oldTasks = localStorage.getItem("tasks");
-    uh = oldTasks ? JSON.parse(oldTasks) : [];
-
-    setTasks(uh);
+    getTasks();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+  // useEffect(() => {
+  //   let uh: Task[];
+  //   const oldTasks = localStorage.getItem("tasks");
+  //   uh = oldTasks ? JSON.parse(oldTasks) : [];
+
+  //   setTasks(uh);
+  // }, []);
+
+  // useEffect(() => {
+  //   localStorage.setItem("tasks", JSON.stringify(tasks));
+  // }, [tasks]);
 
   const addNewTask = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    setTasks((tasks) => [
-      ...tasks,
-      {
-        text: newTask,
-        completed: false,
-        dateAdded: new Date(),
-      },
-    ]);
+    // setTasks((tasks) => [
+    //   ...tasks,
+    //   {
+    //     text: newTask,
+    //     completed: false,
+    //     dateAdded: new Date(),
+    //   },
+    // ]);
     setNewTask("");
   };
 
-  const completeTask = (index: number) => {
-    const tempTasks = [...tasks];
-    tempTasks[index].completed = !tempTasks[index].completed;
-    setTasks(tempTasks);
+  // const completeTask = (index: number) => {
+  //   const tempTasks = [...tasks];
+  //   tempTasks[index].completed = !tempTasks[index].completed;
+  //   setTasks(tempTasks);
+  // };
+
+  const completeTask = (id: string) => {
+    API.toggleCompletion(id).then((res) => getTasks());
   };
 
   return (
@@ -58,21 +58,21 @@ function Form() {
           value={newTask}
           onChange={(e) => setNewTask(e.currentTarget.value)}
         />
-        <button onClick={addNewTask}>ADD</button>
+        {/* <button onClick={addNewTask}>ADD</button> */}
       </form>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>
           <h3>New Tasks</h3>
           <ol>
             {tasks.map(
-              (task, i) =>
+              (task) =>
                 !task.completed && (
                   <li
-                    key={i}
+                    key={task._id}
                     style={{
                       textDecoration: task.completed ? "line-through" : "none",
                     }}
-                    onClick={() => completeTask(i)}
+                    onClick={() => completeTask(task._id)}
                   >
                     {task.text}
                   </li>
@@ -84,14 +84,14 @@ function Form() {
           <h3>Completed Tasks</h3>
           <ol>
             {tasks.map(
-              (task, i) =>
+              (task) =>
                 task.completed && (
                   <li
-                    key={i + 100}
+                    key={task._id}
                     style={{
                       textDecoration: task.completed ? "line-through" : "none",
                     }}
-                    onClick={() => completeTask(i)}
+                    onClick={() => completeTask(task._id)}
                   >
                     {task.text}
                   </li>

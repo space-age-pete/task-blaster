@@ -9,4 +9,6 @@ const router = Router();
 
 router.get("/getTasks", taskController.getTasks)
 
+router.put("/toggleCompletion/:id", taskController.toggleTaskCompletion)
+
 export default router;

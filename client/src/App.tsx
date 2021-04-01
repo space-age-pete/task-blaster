@@ -76,3 +76,7 @@ export default App;
 // drag or hover functionality idk
 // eventually do GraphQL and maybe Postgres
 // maybe do a login thing? Redux?
+
+//UI/UX:
+//drag api tasks to rearrange the order (or even arrows?)
+//+ - signs to increase size of font of tasks

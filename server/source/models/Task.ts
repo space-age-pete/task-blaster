@@ -3,6 +3,9 @@ import {Document, Schema, model} from "mongoose";
 interface ITask extends Document {
   text: string;
   completed: boolean;
+  dateAdded: Date;
+  dateCompleted?: Date;
+  importance: number;
 }
 
 const TaskSchema: Schema = new Schema(
@@ -14,6 +17,11 @@ const TaskSchema: Schema = new Schema(
     completed: {
       type: Boolean,
       default: false
+    },
+    dateCompleted: Date,
+    importance: {
+      type: Number,
+      default: 5
     }
   },
   {
