@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { setConstantValue } from "typescript";
 import API, { Task } from "../utils/API";
+
+import { Link } from "react-router-dom";
 
 function Form() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -41,21 +42,25 @@ function Form() {
           ADD
         </button>
       </form>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
         <div>
           <h3>New Tasks</h3>
           <ol>
             {tasks.map(
               (task) =>
                 !task.completed && (
-                  <li
-                    key={task._id}
-                    style={{
-                      textDecoration: task.completed ? "line-through" : "none",
-                    }}
-                    onClick={() => completeTask(task._id)}
-                  >
-                    {task.text}
+                  <li key={task._id}>
+                    <span onClick={() => completeTask(task._id)}>O </span>
+                    <Link
+                      to={"/" + task._id}
+                      style={{
+                        textDecoration: task.completed
+                          ? "line-through"
+                          : "none",
+                      }}
+                    >
+                      {task.text}
+                    </Link>
                   </li>
                 )
             )}
@@ -67,14 +72,18 @@ function Form() {
             {tasks.map(
               (task) =>
                 task.completed && (
-                  <li
-                    key={task._id}
-                    style={{
-                      textDecoration: task.completed ? "line-through" : "none",
-                    }}
-                    onClick={() => completeTask(task._id)}
-                  >
-                    {task.text}
+                  <li key={task._id}>
+                    <span onClick={() => completeTask(task._id)}>O </span>
+                    <Link
+                      to={"/" + task._id}
+                      style={{
+                        textDecoration: task.completed
+                          ? "line-through"
+                          : "none",
+                      }}
+                    >
+                      {task.text}
+                    </Link>
                   </li>
                 )
             )}

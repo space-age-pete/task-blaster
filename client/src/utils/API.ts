@@ -15,6 +15,12 @@ const getTasks = async ()=>{
   return data;
 }
 
+const getOneTask = async (id: string)=>{
+  const data: {data: Task} = await axios.get("/api/tasks/" + id)
+  console.log("data", data)
+  return data;
+}
+
 const addTask = (text: string)=>{
   return axios.post("/api/tasks", {text})
 }
@@ -23,4 +29,4 @@ const toggleCompletion = (id: string)=>{
   return axios.put("/api/tasks/toggleCompletion/" + id)
 }
 
-export default {getTasks, addTask, toggleCompletion}
+export default {getTasks, getOneTask, addTask, toggleCompletion}
