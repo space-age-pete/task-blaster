@@ -1,6 +1,6 @@
 import {Document, Schema, model} from "mongoose";
 
-interface ITask extends Document {
+export interface ITask extends Document {
   text: string;
   completed: boolean;
   dateAdded: Date;
