@@ -1,4 +1,6 @@
 import Task from "../models/Task";
+import Category from "../models/Category"
+
 import {Request, Response} from "express";
 
 const getTasks = async (req: Request, res: Response) => {
@@ -31,7 +33,8 @@ const getOneTask = async (req: Request, res: Response) => {
 const addTask = async (req: Request, res: Response) => {
   try {
     const dbTask = await Task.create(req.body);
-
+    
+    
     res.json(dbTask)
 
   } catch (err){
