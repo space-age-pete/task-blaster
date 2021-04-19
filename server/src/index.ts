@@ -6,6 +6,7 @@ import { CategoryResolver } from "./resolvers/CategoryResolver";
 
 import { User } from "./entity/User";
 import { ApolloServer } from "apollo-server-express";
+import { TaskResolver } from "./resolvers/TaskResolver";
 
 (async () => {
   try {
@@ -16,7 +17,7 @@ import { ApolloServer } from "apollo-server-express";
 
     const apolloServer = new ApolloServer({
       schema: await buildSchema({
-        resolvers: [CategoryResolver],
+        resolvers: [CategoryResolver, TaskResolver],
       }),
     });
 

@@ -5,7 +5,7 @@ import { Category } from "../entity/Category";
 export class CategoryResolver {
   @Query(() => [Category])
   async getCategories() {
-    const categories = await Category.find();
+    const categories = await Category.find({ relations: ["tasks"] });
     return categories;
   }
 
