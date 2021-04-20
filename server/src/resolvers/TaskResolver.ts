@@ -1,5 +1,22 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Field,
+  InputType,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { Task } from "../entity/Task";
+
+@InputType()
+class TaskInput {
+  @Field()
+  taskName: string;
+
+  @Field(() => Int)
+  category_id: number;
+}
 
 @Resolver()
 export class TaskResolver {
@@ -12,10 +29,11 @@ export class TaskResolver {
 
   @Mutation(() => Task)
   async createTask(
-    @Arg("taskName")
-    taskName: string
+    @Arg("newTaskData", () => TaskInput)
+    newTaskData: TaskInput
   ) {
-    const task = await Task.create({ taskName, category_id: 1 }).save();
+    console.log("TRYNA CREATE A TASK HERE OH");
+    const task = await Task.create(newTaskData).save();
     return task;
   }
 }

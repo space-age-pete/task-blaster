@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import API, { Task } from "../utils/API";
 
 import { Link } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { CategoryData, GET_CATEGORIES, Task, TaskData } from "../utils/graphql";
 
 const GET_TASKS = gql`
   query {
@@ -18,8 +18,8 @@ const GET_TASKS = gql`
 `;
 
 const ADD_TASK = gql`
-  mutation {
-    createTask(taskName: "get internet") {
+  mutation createTask($newTask: TaskInput!) {
+    createTask(newTaskData: $newTask) {
       id
       taskName
       completed
@@ -29,22 +29,34 @@ const ADD_TASK = gql`
   }
 `;
 
-interface TaskData {
-  id: number;
+interface NewTaskDetails {
   taskName: string;
-  completed: boolean;
-  category: {
-    categoryName: string;
-  };
+  category_id: number;
 }
 
 function QueryTest() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTask, setNewTask] = useState("");
+  const [newTaskCategoryID, setNewTaskCategoryID] = useState(0);
+
+  //CAN PROBABLY GET BOTH OF THESE IN ONE DOUBLE QUERY
+  //OR EVEN IN A SINGLE ONE IF I PUT SOME THOUGHT INTO IT LOL
 
   const { loading, data } = useQuery<TaskData>(GET_TASKS);
   console.log({ loading, data });
 
-  const [addTask] = useMutation(ADD_TASK);
+  const { loading: loading2, data: data2 } = useQuery<CategoryData>(
+    GET_CATEGORIES
+  );
+  console.log({ loading2, data2 });
+
+  const [addTask] = useMutation<
+    { createTask: Task },
+    { newTask: NewTaskDetails }
+  >(ADD_TASK, {
+    variables: {
+      newTask: { taskName: newTask, category_id: newTaskCategoryID },
+    },
+  });
 
   const addNewTask = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -52,10 +64,41 @@ function QueryTest() {
     addTask();
   };
 
+  const handleDropdown = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const catID = +event.target.value;
+    if (typeof catID === "number") setNewTaskCategoryID(catID);
+  };
+
+  if (loading || loading2) return <h1>:-/</h1>;
+
   return (
     <>
+      {data2?.getCategories && (
+        <form>
+          <label htmlFor="cars">Choose a category:</label>
+
+          <select name="cars" id="cars" onChange={handleDropdown}>
+            <option value="0">select:</option>
+            {data2.getCategories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.categoryName}
+              </option>
+            ))}
+          </select>
+          <input
+            type="text"
+            value={newTask}
+            onChange={(e) => setNewTask(e.currentTarget.value)}
+          />
+          <button
+            onClick={addNewTask}
+            disabled={!(newTask && newTaskCategoryID)}
+          >
+            ADD
+          </button>
+        </form>
+      )}
       <pre>{data && JSON.stringify(data, null, 2)}</pre>
-      <button onClick={addNewTask}>ADD TASK</button>
     </>
   );
 }
