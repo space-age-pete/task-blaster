@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Message from "../components/Message";
 import Form from "../components/Form";
 import API from "../utils/API";
+import QueryTest from "../components/QueryTest";
 
 type Color = {
   backgroundColor: "darkRed" | "lightBlue" | "lightGreen" | "white";
@@ -60,7 +61,8 @@ function Home() {
           </button>
         </div>
       </div>
-      <Form />
+      {/* <Form /> */}
+      <QueryTest />
     </>
   );
 }
