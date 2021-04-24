@@ -27,6 +27,17 @@ export class TaskResolver {
     return tasks;
   }
 
+  @Query(() => Task, { nullable: true })
+  async getTask(
+    @Arg("id", () => Int)
+    id: number
+  ): Promise<Task | undefined> {
+    // maybe should be Promise<Task | null> ?
+    const task = await Task.findOne({ id }, { relations: ["category"] });
+    console.log(task);
+    return task;
+  }
+
   @Mutation(() => Task)
   async createTask(
     @Arg("newTaskData", () => TaskInput)

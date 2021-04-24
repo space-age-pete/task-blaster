@@ -10,7 +10,7 @@ type Color = {
   textColor: "red" | "blue" | "green" | "black";
 };
 
-function Home() {
+function Test() {
   const [currentColor, setCurrentColor] = useState<Color>({
     backgroundColor: "white",
     textColor: "black",
@@ -37,17 +37,37 @@ function Home() {
 
   return (
     <>
-      <div className="App" style={{ padding: "75px" }}>
+      <div className="App">
         <Message text={"hello it's me josh"} />
-
-        <QueryTest />
+        <div
+          style={{
+            color: currentColor?.textColor,
+            backgroundColor: currentColor?.backgroundColor,
+            width: "250px",
+            height: "250px",
+          }}
+        >
+          THIS IS THE BOX
+        </div>
+        <div className="buttonTown">
+          <button value="red" onClick={handleButtonClick}>
+            RED
+          </button>
+          <button value="blue" onClick={handleButtonClick}>
+            BLUE
+          </button>
+          <button value="green" onClick={handleButtonClick}>
+            GREEN
+          </button>
+        </div>
       </div>
       {/* <Form /> */}
+      <QueryTest />
     </>
   );
 }
 
-export default Home;
+export default Test;
 
 // plans
 // add categories, importance level

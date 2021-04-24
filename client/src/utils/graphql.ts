@@ -1,7 +1,46 @@
 import { gql } from "@apollo/client";
 
+export const GET_TASKS = gql`
+  query {
+    getTasks {
+      id
+      taskName
+      completed
+      category {
+        categoryName
+      }
+    }
+  }
+`;
+
+export const GET_TASK = gql`
+  query getTask($id: Int!) {
+    getTask(id: $id) {
+      id
+      taskName
+      completed
+      category {
+        id
+        categoryName
+      }
+    }
+  }
+`;
+
+export const ADD_TASK = gql`
+  mutation createTask($newTask: TaskInput!) {
+    createTask(newTaskData: $newTask) {
+      id
+      taskName
+      completed
+      notes
+      category_id
+    }
+  }
+`;
+
 export const GET_CATEGORIES = gql`
-  query getem {
+  query getCategories {
     getCategories {
       id
       categoryName

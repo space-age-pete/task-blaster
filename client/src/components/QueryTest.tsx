@@ -2,32 +2,14 @@ import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { CategoryData, GET_CATEGORIES, Task, TaskData } from "../utils/graphql";
-
-const GET_TASKS = gql`
-  query {
-    getTasks {
-      id
-      taskName
-      completed
-      category {
-        categoryName
-      }
-    }
-  }
-`;
-
-const ADD_TASK = gql`
-  mutation createTask($newTask: TaskInput!) {
-    createTask(newTaskData: $newTask) {
-      id
-      taskName
-      completed
-      notes
-      category_id
-    }
-  }
-`;
+import {
+  CategoryData,
+  GET_CATEGORIES,
+  Task,
+  TaskData,
+  GET_TASKS,
+  ADD_TASK,
+} from "../utils/graphql";
 
 interface NewTaskDetails {
   taskName: string;
@@ -43,6 +25,7 @@ function QueryTest() {
 
   const { loading, data } = useQuery<TaskData>(GET_TASKS);
   console.log({ loading, data });
+  console.log(data?.getTasks);
 
   const { loading: loading2, data: data2 } = useQuery<CategoryData>(
     GET_CATEGORIES
@@ -53,6 +36,12 @@ function QueryTest() {
     { createTask: Task },
     { newTask: NewTaskDetails }
   >(ADD_TASK, {
+    update(cache, { data }) {
+      const existingTasks = cache.readQuery({
+        query: GET_TASKS,
+      });
+      console.log({ existingTasks, data });
+    },
     variables: {
       newTask: { taskName: newTask, category_id: newTaskCategoryID },
     },
@@ -74,7 +63,17 @@ function QueryTest() {
   return (
     <>
       {data2?.getCategories && (
-        <form>
+        <form
+          style={{
+            border: "solid black medium",
+            display: "flex",
+            flexDirection: "column",
+            width: "500px",
+            height: "100px",
+            padding: "25px",
+            justifyContent: "space-between",
+          }}
+        >
           <label htmlFor="cars">Choose a category:</label>
 
           <select name="cars" id="cars" onChange={handleDropdown}>
@@ -98,7 +97,13 @@ function QueryTest() {
           </button>
         </form>
       )}
-      <pre>{data && JSON.stringify(data, null, 2)}</pre>
+      {/* <pre>{data && JSON.stringify(data, null, 2)}</pre> */}
+      {data &&
+        data.getTasks.map((task) => (
+          <Link to={"/" + task.id} key={task.id}>
+            <h6>{task.taskName}</h6>
+          </Link>
+        ))}
     </>
   );
 }
