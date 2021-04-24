@@ -9,6 +9,7 @@ import {
   TaskData,
   GET_TASKS,
   ADD_TASK,
+  TOGGLE_COMPLETION,
 } from "../utils/graphql";
 
 interface NewTaskDetails {
@@ -19,6 +20,7 @@ interface NewTaskDetails {
 function QueryTest() {
   const [newTask, setNewTask] = useState("");
   const [newTaskCategoryID, setNewTaskCategoryID] = useState(0);
+  const [categoryFilter, setCategoryFilter] = useState("");
 
   //CAN PROBABLY GET BOTH OF THESE IN ONE DOUBLE QUERY
   //OR EVEN IN A SINGLE ONE IF I PUT SOME THOUGHT INTO IT LOL
@@ -37,7 +39,7 @@ function QueryTest() {
     { newTask: NewTaskDetails }
   >(ADD_TASK, {
     update(cache, { data }) {
-      const existingTasks = cache.readQuery({
+      const existingTasks = cache.readQuery<TaskData>({
         query: GET_TASKS,
       });
       console.log({ existingTasks, data });
@@ -45,6 +47,36 @@ function QueryTest() {
     variables: {
       newTask: { taskName: newTask, category_id: newTaskCategoryID },
     },
+  });
+
+  const [toggleCompletion] = useMutation<
+    { toggleCompletion: number },
+    { id: number }
+  >(TOGGLE_COMPLETION, {
+    // update(cache, { data }) {
+    //   const existingTasks = cache.readQuery<TaskData>({
+    //     query: GET_TASKS,
+    //   });
+    //   const updatedTasks = [...(existingTasks?.getTasks || [])];
+    //   updatedTasks.forEach((task) => {
+    //     if (task.id === data?.toggleCompletion)
+    //       //task.completed = !task.completed;
+    //       task.completed = true;
+    //     console.log("ugh");
+    //   });
+    //   console.log({ existingTasks, updatedTasks });
+    //   cache.writeQuery<TaskData>({
+    //     query: GET_TASKS,
+    //     data: {
+    //       getTasks: updatedTasks,
+    //       // getTasks: existingTasks?.getTasks.map((task) => {
+    //       //   if (task.id === data?.toggleCompletion)
+    //       //     task.completed = !task.completed;
+    //       //   return task;
+    //       // }),
+    //     },
+    //   });
+    // },
   });
 
   const addNewTask = (e: React.MouseEvent) => {
@@ -98,12 +130,42 @@ function QueryTest() {
         </form>
       )}
       {/* <pre>{data && JSON.stringify(data, null, 2)}</pre> */}
-      {data &&
-        data.getTasks.map((task) => (
-          <Link to={"/" + task.id} key={task.id}>
-            <h6>{task.taskName}</h6>
-          </Link>
+      {data2 &&
+        data2.getCategories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => setCategoryFilter(category.categoryName)}
+          >
+            {category.categoryName}
+          </button>
         ))}
+      <button onClick={() => setCategoryFilter("")}>All</button>
+      {data &&
+        data.getTasks
+          .filter((task) => {
+            return (
+              !categoryFilter || task.category.categoryName === categoryFilter
+            );
+          })
+          .map((task) => (
+            <h4 key={task.id}>
+              <button
+                onClick={() => toggleCompletion({ variables: { id: task.id } })}
+              >
+                ∆
+              </button>
+              &nbsp; &nbsp;
+              <Link
+                to={"/" + task.id}
+                style={{
+                  textDecoration: "none",
+                  color: task.completed ? "grey" : "black",
+                }}
+              >
+                {task.taskName}
+              </Link>
+            </h4>
+          ))}
     </>
   );
 }

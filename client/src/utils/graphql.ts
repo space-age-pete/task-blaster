@@ -39,6 +39,12 @@ export const ADD_TASK = gql`
   }
 `;
 
+export const TOGGLE_COMPLETION = gql`
+  mutation toggleCompletion($id: Int!) {
+    toggleCompletion(id: $id)
+  }
+`;
+
 export const GET_CATEGORIES = gql`
   query getCategories {
     getCategories {

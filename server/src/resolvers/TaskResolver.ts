@@ -47,4 +47,25 @@ export class TaskResolver {
     const task = await Task.create(newTaskData).save();
     return task;
   }
+
+  @Mutation(() => Int)
+  async toggleCompletion(
+    @Arg("id", () => Int)
+    id: number
+  ) {
+    const task = await Task.findOne({ id }, { relations: ["category"] });
+    console.log(task);
+
+    if (task.completed) {
+      task.completed = false;
+      task.dateCompleted = null;
+    } else {
+      task.completed = true;
+      task.dateCompleted = Date();
+    }
+
+    await task.save();
+
+    return task.id;
+  }
 }
